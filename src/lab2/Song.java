@@ -1,10 +1,5 @@
 package lab2;
 
-import lab2.BellNote;
-import lab2.Conductor;
-import lab2.Member;
-import lab2.Note;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -19,7 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Most of this class was made by Jake Grosse
+ * Most of this class was made by Jake Grosse,
+ * Everything in this class was Made by Jake including the comments and java docs
  */
 public class Song {
 	// instance variables

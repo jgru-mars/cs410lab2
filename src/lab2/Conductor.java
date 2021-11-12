@@ -1,86 +1,73 @@
 package lab2;
 
+import java.util.List;
+
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 import lab2.BellNote;
+import lab2.Conductor;
 import lab2.Member;
 import lab2.Note;
-/**
- * @desc Class which is created to manage bellmen. Handles the assigning of
- *       bells and cues bellmen to play their notes.
- * 
- * @author Jake Grosse
- *
- */
-public class Conductor {
 
-	private final Song song;
-	private final AudioFormat af;
+import java.util.LinkedList;
 
-	/**
-	 * @desc Constructor for Conductor
-	 * 
-	 * @param song A Song object (list of BellNotes) to be played by this conductor
-	 */
-	Conductor(Song song) {
-		// make the audioformat suggested, just in a slightly different place.
-		this.af = new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
-		// assign the song
-		this.song = song;
-	}
+public class Conductor  {
+  
+	private static Song song = null;
+	
 
-	/**
-	 * @desc A Conductor method to play the song. Assigns bellmen their bells then
-	 *       cues them when they are to play and for how long.
-	 */
-	void playSong() {
-		// Can the song be played
-		if (song.isValid()) {
-			// try to open the source data line from the audio format in use
+	
+	 public static void main(String[] args) throws Exception {
+	        final AudioFormat af =
+	            new AudioFormat(Note.SAMPLE_RATE, 8, 1, true, false);
+	        Song t = song;
+	    }
+	 
+	 private AudioFormat af;
+	    void Song(AudioFormat af) {
+	        this.af = af;
+	    }
+	    
+	    /**
+		 * This next method will open the txt files and assign the notes to the different Members.
+		 * There will be only one Member for each note
+		 */
+	void playSong(List<BellNote> song) throws LineUnavailableException {
+		// this is the txt file reader that I had for the Tone class
+		if (((Song) song).isValid()) {
 			try (final SourceDataLine line = AudioSystem.getSourceDataLine(af)) {
-				// allow the line to accept data
 				line.open();
 				line.start();
-
-				// make an empty array of bellmen for each note in Note.java
-				final Member[] members = new Member[Note.values().length];
-				// assign these bellmen based on note and pass in the data line
+				final Member[] members = new Member[Note.values().length]; //added
 				for (Note note : Note.values()) {
 					members[note.ordinal()] = new Member(note, line);
 				}
-
-				// for each note in the song
-				for (BellNote noot : song.getBellNotes()) {
-					// extract note and length from the bellnote
-					Note note = noot.note;
-					NoteLength len = noot.length;
-					// the bellman which was assigned the note is given a turn for the note's length
-					// of time
-					members[note.ordinal()].yourTurn(len);
-				}
-
-				// stop them, no need to kill the threads because the daemon value defined in
-				// the Bellman constructor will force them to commit sepuku automagically! YAY!
-				for (Member b : members) {
-					b.stopMember();
-				}
-
-				// throw away the song when it's done being played
-				line.drain();
-			} catch (LineUnavailableException e) {
-				// the AF for the dataline doesn't work, exit the program
-				System.err.println("Fatal Error: Invalid SourceDataLine");
-				System.exit(0);
-			}
-		} else {
-			// print that the song is invalid if it was not valid
-			System.out.println(
-					"This song file is not valid. Choose another song or fix the errors in the file and restart the program.");
+				
+				for (BellNote bn: song) {
+					//playNote(line, bn);
+					Note note = bn.note;
+					NoteLength len = bn.length;
+					members[bn.ordinal()].giveTurn(len); //added
+					}
+			
+			for (Member a : members) {
+			a.stopMember();
 		}
+			line.drain();
+		
+		} catch (LineUnavailableException e) {
+			// the AF for the dataline doesn't work, exit the program
+			System.err.println("Fatal Error: Invalid SourceDataLine");
+			System.exit(0);
+		}
+	} else {
+		// print that the song is invalid if it was not valid
+		System.out.println(
+				"This song file is not valid. Choose another song or fix the errors in the file and restart the program.");
 	}
+}
+}
 
-
-	}
