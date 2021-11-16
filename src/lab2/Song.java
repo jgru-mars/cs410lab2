@@ -1,21 +1,23 @@
 package lab2;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import javax.sound.sampled.AudioFormat;
-
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
+import lab2.BellNote;
+import lab2.Conductor;
+import lab2.Member;
+import lab2.Note;
+import lab2.Song;
+
 
 /**
  * Most of this class was made by Jake Grosse,
  * Everything in this class was Made by Jake including the comments and java docs
+ * 
+ * It is for storing song names and the locations so that it will be easier to open and find the songs
  */
 public class Song {
 	// instance variables
@@ -23,7 +25,7 @@ public class Song {
 	private final String filePath;
 	private List<BellNote> notes = new ArrayList<BellNote>();
 
-	// boolean flag of whether the song can be played
+	// boolean flag of whether the song can be played, if false it would mean that there is no song
 	private boolean validSong = true;
 
 	
@@ -33,19 +35,19 @@ public class Song {
 		this.notes = readSong(filePath);
 	}
 
-	// method to read a song file in to a list of bellnotes
-	// checks for validity
-	private List<BellNote> readSong(String filename) {
+		// method to read a song file in to a list of bellnotes
+		// checks for validity
+		List<BellNote> readSong(String filename) {
 		// initialize the empty song to be added to
 		List<BellNote> song = new ArrayList<BellNote>();
-
+	
 		// create a list of all the notes possible to verify note input
 		List<String> allNotes = new ArrayList<String>();
 		for (Note n : Note.values()) {
 			allNotes.add(n.name());
 		}
 
-		// flags to determine whether the song is valid
+		// more flags to determine whether the song is valid
 		boolean invalidLengthFlag = false;
 		boolean invalidNoteFlag = false;
 
@@ -243,11 +245,17 @@ public class Song {
 					case "8":
 						length = NoteLength.EIGTH;
 						break;
+					case "16":
+						length = NoteLength.SIXTEENTH;
+						break;
+				
 					default:
-						// if there is not a valid input for NoteLength, flag that the song is invalid
-						// and error print
-						invalidLengthFlag = true;
-						System.err.println("Invalid note length at line " + lineNum + " in " + filename);
+					      throw new InvalidNoteLengthException("Invalid value for NoteLength " + str);
+					    }
+//						// if there is not a valid input for NoteLength, flag that the song is invalid
+//						// and error print
+//						invalidLengthFlag = true;
+//						System.err.println("Invalid note length at line " + lineNum + " in " + filename);
 					}
 
 					// if the note in question is not a valid note notation, flag as invalid and
